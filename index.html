@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Viewer</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #spinner {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 50px;
+            height: 50px;
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #3498db;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #reportFrame {
+            display: none;
+            width: 100%;
+            height: calc(100% - 30px); /* Adjust height to fit below the file name */
+        }
+
+        #fileName {
+            display: none;
+            margin-bottom: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        async function checkFileAndLoad() {
+            document.getElementById('spinner').style.display = 'block';
+            const today = new Date();
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            let reportFound = false;
+            let fileName = '';
+
+            for (let i = 0; i < 30; i++) {
+                const date = new Date();
+                date.setDate(today.getDate() - i);
+
+                const day = String(date.getDate()).padStart(2, '0');
+                const month = monthNames[date.getMonth()];
+                const year = date.getFullYear();
+                fileName = `report-${day}-${month}-${year}.html`;
+
+                try {
+                    const response = await fetch(fileName);
+                    if (response.ok) {
+                        document.getElementById('reportFrame').src = fileName;
+                        document.getElementById('fileName').innerText = fileName;
+                        document.getElementById('fileName').style.display = 'block';
+                        document.getElementById('reportFrame').style.display = 'block';
+                        reportFound = true;
+                        break;
+                    }
+                } catch (error) {
+                    // Ignore fetch errors
+                }
+            }
+
+            document.getElementById('spinner').style.display = 'none';
+            if (!reportFound) {
+                alert("No report in the last month. Run again");
+            }
+        }
+    </script>
+</head>
+<body onload="checkFileAndLoad()">
+    <div id="spinner"></div>
+    <div id="fileName"></div>
+    <iframe id="reportFrame"></iframe>
+</body>
+</html>
