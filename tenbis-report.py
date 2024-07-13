@@ -1,5 +1,5 @@
 import requests
-import os 
+import os
 import pickle
 import urllib3
 import json
@@ -23,23 +23,23 @@ HTML_PAGE_TEMPLATE = """
         <head>
         <script>
             function togglehideshow(element) {{
-                 element.style.opacity= element.style.opacity * -1; 
+                 element.style.opacity= element.style.opacity * -1;
             }}
-            
+
             function hideall() {{
             	var elems = document.getElementsByTagName('img');
                 for (var i = 0; i < elems.length; i++) {{
                     elems[i].style.opacity = -1;
                 }}
             }}
-            
+
             function showall() {{
             	var elems = document.getElementsByTagName('img');
                 for (var i = 0; i < elems.length; i++) {{
                     elems[i].style.opacity = 1;
                 }}
             }}
-            
+
         </script>
         <style>
         button {{
@@ -60,7 +60,7 @@ HTML_PAGE_TEMPLATE = """
         border-collapse: collapse;
         width: 100%;
         }}
-        
+
         img {{
         opacity: 1
         }}
@@ -91,6 +91,7 @@ HTML_PAGE_TEMPLATE = """
             <tr> <th>Item number</th> <th>Store</th>  <th>Order date</th>   <th>Barcode number</th>   <th>Barcode image</br><button onclick="showall()">Show all</button><button onclick="hideall()">Hide all</button></th>   <th>Amount</th>   <th>Expiration date</th>
             {output_table}
             </table>
+	    <p> Sum is : <span id="sum">{total_amount}</span>₪</p>
         </body>
         </html>
     """
@@ -126,7 +127,7 @@ def main_procedure():
                 print("Token found! ", count, order['orderDateStr'], barcode_number, barcode_img_url, amount, valid_date)
 
     if count > 0:
-        write_file(OUTPUT_PATH, HTML_PAGE_TEMPLATE.format(output_table=rows_data))
+        write_file(OUTPUT_PATH, HTML_PAGE_TEMPLATE.format(output_table=rows_data, total_amount=total_amount))
         print(f"{str(count)} tokens were found with total of {total_amount} NIS!")
         print(f'Please find your report here: {CWD} ({FILENAME})')
     else:
@@ -135,13 +136,13 @@ def main_procedure():
 def input_number(message):
   while True:
     try:
-       userInput = int(input(message))       
+       userInput = int(input(message))
     except ValueError:
        print("Not an integer! Try again. (examples: 1,2,3,4,5)")
        continue
     else:
-       return userInput 
-       break 
+       return userInput
+       break
 
 def write_file(path, content):
     with open(path, 'w', encoding='utf-8') as f:
@@ -175,7 +176,7 @@ def get_report_for_month(session, month):
 
     all_orders = resp_json['Data']['orderList']
     barcode_orders = [x for x in all_orders if x['isBarCodeOrder'] == True]
-    
+
     return barcode_orders
 
 def get_barcode_order_info(session, order_id, res_id):
