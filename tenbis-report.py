@@ -87,11 +87,11 @@ HTML_PAGE_TEMPLATE = """
         </head>
         <body>
             <h1> Non used barcodes </h1>
+	        <h4> Sum is : <span id="sum">{total_amount}</span>₪</h4>
             <table id="barcodes">
             <tr> <th>Item number</th> <th>Store</th>  <th>Order date</th>   <th>Barcode number</th>   <th>Barcode image</br><button onclick="showall()">Show all</button><button onclick="hideall()">Hide all</button></th>   <th>Amount</th>   <th>Expiration date</th>
             {output_table}
             </table>
-	    <p> Sum is : <span id="sum">{total_amount}</span>₪</p>
         </body>
         </html>
     """
